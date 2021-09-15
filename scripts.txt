@@ -1,0 +1,15 @@
+// Virtual enviroment
+python37 -m venv venv
+
+//pip list in requirements.txt
+pip freeze > requirements.txt
+
+//pip install and upgrade
+.\venv\Scripts\activate
+python -m pip install --upgrade pip ; pip install --upgrade -r requirements.txt
+
+// Profiling
+python -m cProfile -o prof.prof main.py ; snakeviz prof.prof
+
+//uninstall all package
+pip freeze > to_delete.txt ; pip uninstall -y -r to_delete.txt ; Remove-Item to_delete.txt
