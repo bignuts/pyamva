@@ -1,5 +1,5 @@
 // Virtual enviroment
-python37 -m venv venv
+python -m venv venv
 
 //pip list in requirements.txt
 pip freeze > requirements.txt

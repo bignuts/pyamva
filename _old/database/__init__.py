@@ -26,7 +26,7 @@ class Param:
         self.active = active
 
     @classmethod
-    def from_dict(self, d: Dict):
+    def from_dict(cls, d: Dict):
         symbol = d.get('symbol', '')
         timeframe = d.get('timeframe', '')
         days = d.get('days', -1)
@@ -35,7 +35,7 @@ class Param:
         tpo_size = d.get('tpo_size', -1)
         profiles = d.get('profiles', [])
         active = d.get('active', False)
-        return self(symbol, timeframe, days, decimal, offset, tpo_size, profiles, active)
+        return cls(symbol, timeframe, days, decimal, offset, tpo_size, profiles, active)
 
     def to_dict(self) -> Dict:
         return {'symbol': self.symbol,
@@ -76,9 +76,9 @@ class IDatabase:
     def get(self, symbol: str) -> Param:
         pass
 
-    @abc.abstractclassmethod
-    def get_active(self) -> List[Param]:
-        pass
+    # @abc.abstractclassmethod
+    # def get_active(self) -> List[Param]:
+    #     pass
 
     @abc.abstractclassmethod
     def update(self, param: Param) -> bool:
