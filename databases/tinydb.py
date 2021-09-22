@@ -3,7 +3,6 @@ from tinydb import TinyDB, Query
 from databases.interfaces import IDatabase
 from databases.structs import Param
 
-
 class TinyDatabase(IDatabase):
     """Implementazione di IDatabase usando TinyDB"""
 

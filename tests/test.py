@@ -1,4 +1,7 @@
 import unittest
+import sys
+
+print(sys.path)
 
 
 class TestSum(unittest.TestCase):

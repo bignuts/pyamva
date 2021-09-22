@@ -1,6 +1,9 @@
+import sys
+import site
+site.addsitedir('')
+print(sys.path)
 import unittest
-from databases.tinydb import TinyDatabase
-
+from databases import TinyDatabase
 
 class TestTinyDB(unittest.TestCase):
 
