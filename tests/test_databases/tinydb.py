@@ -1,42 +1,59 @@
 from site import addsitedir
-from typing import Set
 addsitedir('..')
-import unittest
-from databases import TinyDatabase, Param
+from functools import wraps
 from os import remove
+from databases import TinyDatabase, Param
+import unittest
 
 
-class SetUpDatabase:
+# TODO fai funzionare sta merda
+# class SetUpDatabase:
 
-    def __init__(self, db_name: str):
-        self._db_path = f'./tests/test_databases/{db_name}.json'
-        self._db = TinyDatabase(self._db_path)
+#     def __init__(self, db_name: str):
+#         self._db_path = f'./tests/test_databases/{db_name}.json'
+#         self._db = TinyDatabase(self._db_path)
 
-    def __enter__(self):
-        return self._db
+#     def __enter__(self):
+#         return self._db
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
+#     def __exit__(self, exc_type, exc_val, exc_tb):
+#         pass
 
-    def __del__(self):
-        self._db = None
-        del self._db
-        remove(self._db_path)
+#     def __del__(self):
+#         self._db = None
+#         del self._db
+#         remove(self._db_path)
+
+
+def setup_database(db_name):
+    '''Setup e pulizia del database per eseguire i vari test'''
+    def arg_wrapper(func):
+        @wraps(func)
+        def func_wrapper(self, **kwargs):
+            db = TinyDatabase(db_name)
+            func(self, db=db)
+            # chiudi connessione
+            del db
+            # rimuovi database
+            remove(db_name)
+        return func_wrapper
+    return arg_wrapper
 
 
 class TestTinyDatabase(unittest.TestCase):
 
-    def test_add(self):
-        # with SetUpDatabase('test_add.json') as db:
-        db_path = 'test_add.json'
-        db = TinyDatabase(db_path)
+    total_run = 0
+
+    @setup_database('test_add.json')
+    def test_add(self, **kwargs):
+        TestTinyDatabase.total_run += 1
+        print(f'\nRunned total times => {TestTinyDatabase.total_run}')
+        db = kwargs['db']
         record = Param(symbol='TEST', timeframe=30, days=20, decimal=5,
                        offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True)
         id = db.add(record)
         self.assertEqual(
             id, 1, 'Il valore dovrebbe essere ugale a 1 perchè si è inserito un solo record')
-        del db
-        remove(db_path)
 
     # def setUp(self):
     #     self.db = TinyDatabase(dbname)

@@ -1,24 +1,49 @@
 {
-	// Place your snippets for python here. Each snippet is defined under a snippet name and has a prefix, body and 
-	// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
-	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the 
-	// same ids are connected.
-	// Example:
-	"Test template": {
-		"prefix": "tt",
-		"body": [
-			"from site import addsitedir",
-			"addsitedir('..')",
-			"import unittest",
-			"\n",			
-			"class Test$1(unittest.TestCase):\n",
-			"\tdef setUp(self):",
-			"\t\tpass\n",
-			"\tdef tearDown(self):",
-			"\t\tpass\n",
-			"\tdef test_$2(self):",
-			"\t\t$3\n"
-			],
-		"description": "Create a blank test file"
-	}
+  // Place your snippets for python here. Each snippet is defined under a snippet name and has a prefix, body and
+  // description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+  // $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the
+  // same ids are connected.
+  // Example:
+  "unittest template": {
+    "prefix": "tt",
+    "body": [
+      "from site import addsitedir",
+      "addsitedir('..')",
+      "import unittest",
+      "",
+      "",
+      "class Test$1(unittest.TestCase):",
+      "",
+      "\tdef setUp(self):",
+      "\t\tpass",
+      "",
+      "\tdef tearDown(self):",
+      "\t\tpass",
+      "",
+      "\tdef test_$2(self):",
+      "\t\t$3",
+      ""
+    ],
+    "description": "Create a blank unittest file"
+  },
+  "decorator template": {
+    "prefix": "@dec",
+    "body": [
+      "from functools import wraps",
+      "",
+      "",
+      "def $1(arg):",
+      "\tdef arg_wrapper(func):",
+      "\t\t@wraps(func)",
+      "\t\tdef func_wrapper(*args, **kwargs):",
+      "\t\t\t# Do something before",
+      "\t\t\tvalue = func(*args, **kwargs)",
+      "\t\t\t# Do something after",
+      "\t\t\treturn value",
+      "\t\treturn func_wrapper",
+      "\treturn arg_wrapper",
+      ""
+    ],
+    "description": "Create a decorator template"
+  }
 }
