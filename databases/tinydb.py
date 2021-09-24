@@ -1,5 +1,5 @@
-from typing import Dict, List
-from tinydb import TinyDB, Query, Storage
+from typing import List, Tuple
+from tinydb import TinyDB, Query
 from databases.interfaces import IDatabase
 from databases.models import Param
 
@@ -21,7 +21,19 @@ class TinyDatabase(IDatabase):
 
     def add(self, record: Param) -> int:
         return self._db.insert(record)
-    
+
+    def get_all(self) -> List[Param]:
+        return self._db.all()
+
+    def __len__(self) -> int:
+        return len(self._db)
+
+    def get(self, id: Tuple[str, int]) -> Param:
+        if type(id) == type(str):
+            return self._db.get(Query().symbol == id)
+        else:
+             return self._db.get(doc_id=id)
+
     # def get(self, symbol: str) -> Param:
     #     dict = self._db.search(Query().symbol == symbol)
     #     if dict:

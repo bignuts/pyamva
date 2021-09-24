@@ -25,35 +25,68 @@ import unittest
 #         remove(self._db_path)
 
 
-def setup_database(db_name):
+def setup_database(func):
     '''Setup e pulizia del database per eseguire i vari test'''
-    def arg_wrapper(func):
-        @wraps(func)
-        def func_wrapper(self, **kwargs):
-            db = TinyDatabase(db_name)
-            func(self, db=db)
-            # chiudi connessione
-            del db
-            # rimuovi database
-            remove(db_name)
-        return func_wrapper
-    return arg_wrapper
+    @wraps(func)
+    def func_wrapper(self, **kwargs):
+        total_run = 0
+        db_name = f'{func.__name__}.json'
+        db = TinyDatabase(db_name)
+        func(self, db=db)
+        # chiudi connessione
+        del db
+        # rimuovi database
+        remove(db_name)
+        total_run += 1
+        print(f'\nRunned total times => {total_run}')
+    return func_wrapper
 
 
 class TestTinyDatabase(unittest.TestCase):
 
-    total_run = 0
-
-    @setup_database('test_add.json')
+    @setup_database
     def test_add(self, **kwargs):
-        TestTinyDatabase.total_run += 1
-        print(f'\nRunned total times => {TestTinyDatabase.total_run}')
         db = kwargs['db']
         record = Param(symbol='TEST', timeframe=30, days=20, decimal=5,
                        offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True)
         id = db.add(record)
         self.assertEqual(
             id, 1, 'Il valore dovrebbe essere ugale a 1 perchè si è inserito un solo record')
+
+    @setup_database
+    def test_get_all(self, **kwargs):
+        db = kwargs['db']
+        for i in range(10):
+            record = Param(symbol=f'TEST{i}', timeframe=30, days=20, decimal=5,
+                           offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True)
+            db.add(record)
+        db_len = len(db)
+        self.assertEqual(
+            db_len, 10, 'Il valore dovrebbe essere ugale a 10 perchè sono stati inseriti 10 records')
+
+    @setup_database
+    def test_get_with_int(self, **kwargs):
+        db = kwargs['db']
+        for i in range(10):
+            record = Param(symbol=f'TEST{i}', timeframe=30, days=20, decimal=5,
+                           offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True)
+            db.add(record)
+        res = db.get(5)
+        self.assertDictEqual(
+            res, Param(symbol=f'TEST4', timeframe=30, days=20, decimal=5,
+                       offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True), 'Il valore dovrebbe essere ugale a 10 perchè sono stati inseriti 10 records')
+    
+    @setup_database
+    def test_get_with_str(self, **kwargs):
+        db = kwargs['db']
+        for i in range(10):
+            record = Param(symbol=f'TEST{i}', timeframe=30, days=20, decimal=5,
+                           offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True)
+            db.add(record)
+        res = db.get('TEST4')
+        self.assertDictEqual(
+            res, Param(symbol=f'TEST4', timeframe=30, days=20, decimal=5,
+                       offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True), 'Il valore dovrebbe essere ugale a 10 perchè sono stati inseriti 10 records')
 
     # def setUp(self):
     #     self.db = TinyDatabase(dbname)

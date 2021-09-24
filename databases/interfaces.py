@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List
+from typing import List
 from databases.models import Param
 
 
@@ -19,13 +19,13 @@ class IDatabase(ABC):
     def add(self, record: Param) -> int:
         pass
 
-    # @abstractmethod
-    # def get_all(self):
-    #     pass
+    @abstractmethod
+    def get_all(self) -> List[Param]:
+        pass
 
-    # @abstractmethod
-    # def get(self, key):
-    #     pass
+    @abstractmethod
+    def get(self, id: str) -> Param:
+        pass
 
     # @abstractmethod
     # def update(self, record):
