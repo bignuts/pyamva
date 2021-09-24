@@ -12,5 +12,8 @@
 
 
 import sys
+from databases import TinyDatabase
 
-print(sys.path)
+# print(sys.path)
+
+TinyDatabase()

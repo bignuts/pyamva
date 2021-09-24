@@ -1,38 +1,36 @@
 from abc import ABC, abstractmethod
-from typing import List
-from databases.structs import Param
+from typing import Any, Dict, List
+from databases.models import Param
 
 
 class IDatabase(ABC):
-    """Interfaccia per collegamento e operazioni con il Database"""
-
-    def __init__(self, dbinstance):
-        self._db = dbinstance
+    '''Interfaccia per collegamento e operazioni con il dabase'''
 
     @abstractmethod
-    def connect(self) -> None:
-        pass
-
-    @abstractmethod
-    def add(self, param: Param) -> bool:
-        pass
-
-    @abstractmethod
-    def get_all(self) -> List[Param]:
-        pass
-
-    @abstractmethod
-    def get(self, key: str) -> Param:
-        pass
-
-    @abstractmethod
-    def update(self, param: Param) -> bool:
-        pass
-
-    @abstractmethod
-    def remove(self, key: str) -> None:
+    def connect(self, db_path: str):
+        '''Metodo per connettersi al database e restituisce un'istanza ad esso'''
         pass
 
     @abstractmethod
     def disconnect(self) -> None:
         pass
+
+    @abstractmethod
+    def add(self, record: Param) -> int:
+        pass
+
+    # @abstractmethod
+    # def get_all(self):
+    #     pass
+
+    # @abstractmethod
+    # def get(self, key):
+    #     pass
+
+    # @abstractmethod
+    # def update(self, record):
+    #     pass
+
+    # @abstractmethod
+    # def remove(self, key):
+    #     pass

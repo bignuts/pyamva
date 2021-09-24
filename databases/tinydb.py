@@ -1,52 +1,62 @@
-from typing import List
-from tinydb import TinyDB, Query
+from typing import Dict, List
+from tinydb import TinyDB, Query, Storage
 from databases.interfaces import IDatabase
-from databases.structs import Param
+from databases.models import Param
+
 
 class TinyDatabase(IDatabase):
     """Implementazione di IDatabase usando TinyDB"""
 
     def __init__(self, dbpath: str = './tinydb.json'):
-        self._db = TinyDB(dbpath)
+        self._db = self.connect(dbpath)
 
-    def connect(self) -> None:
-        return super().connect()
+    def __del__(self):
+        self.disconnect()
+
+    def connect(self, dbpath) -> TinyDB:
+        return TinyDB(dbpath)
 
     def disconnect(self) -> None:
-        return super().disconnect()
+        self._db.close()
 
-    def add(self, param: Param) -> bool:
-        if not self._exist(param.symbol):
-            id = self._db.insert(param.to_dict())
-            return bool(id)
-        return False
+    def add(self, record: Param) -> int:
+        return self._db.insert(record)
+    
+    # def get(self, symbol: str) -> Param:
+    #     dict = self._db.search(Query().symbol == symbol)
+    #     if dict:
+    #         return dict[0]
+    #     else:
+    #         return Param(symbol='NONEXISTING', timeframe=-1, days=-1, decimal=-1,
+    #                      offset=-1, tpo_size=-1, profiles=[], active=False)
 
-    def get_all(self) -> List[Param]:
-        d_list = self._db.all()
-        l: List[Param] = []
-        for d in d_list:
-            l.append(Param.from_dict(d))
-        return l
+    # def remove(self, symbol: str) -> int:
+    #     removed_ids = self._db.remove(Query().symbol == symbol)
+    #     if removed_ids:
+    #         return removed_ids[0]
+    #     else:
+    #         return 0
 
-    def get(self, symbol: str) -> Param:
-        d = self._db.search(Query().symbol == symbol)[0]
-        return Param.from_dict(d)
+    # def _exist(self, symbol: str) -> bool:
+    #     return bool(len(self._db.search(Query().symbol == symbol)))
 
-    def get_active(self) -> List[Param]:
-        d_list = self._db.search(Query().active == True)
-        l: List[Param] = []
-        for d in d_list:
-            l.append(Param.from_dict(d))
-        return l
+    # def get_all(self) -> List[Param]:
+    #     # d_list = self._db.all()
+    #     # l: List[Param] = []
+    #     # for d in d_list:
+    #     #     l.append(d)
+    #     # return l
+    #     return self._db.all()
 
-    def update(self, param: Param) -> bool:
-        if self._exist(param.symbol):
-            self._db.update(param.to_dict(), Query().symbol == param.symbol)
-            return True
-        return False
+    # def get_active(self) -> List[Param]:
+    #     d_list = self._db.search(Query().active == True)
+    #     l: List[Param] = []
+    #     for d in d_list:
+    #         l.append(d)
+    #     return l
 
-    def remove(self, symbol: str) -> None:
-        self._db.remove(Query().symbol == symbol)
-
-    def _exist(self, symbol: str) -> bool:
-        return bool(len(self._db.search(Query().symbol == symbol)))
+    # def update(self, param: Param) -> bool:
+    #     if self._exist(param['symbol']):
+    #         self._db.update(param, Query().symbol == param['symbol'])
+    #         return True
+    #     return False
