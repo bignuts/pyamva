@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
-from typing import List, Dict, Optional
+from typing import Dict, Optional, Sequence
 
 
 class IDatabase(ABC):
@@ -21,10 +20,10 @@ class IDatabase(ABC):
 
     @abstractmethod
     def add(self, record: Dict) -> int:
-        pass
+        pass   
 
     @abstractmethod
-    def get_all(self) -> List[Dict]:
+    def get_all(self) -> Sequence[Dict]:
         pass
 
     @abstractmethod

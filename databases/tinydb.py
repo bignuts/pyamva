@@ -1,9 +1,7 @@
-from typing import List, Dict, Optional
+from typing import Dict, Optional, Sequence
 from tinydb import TinyDB, Query
-from tinydb.table import Document
 from databases.interfaces import IDatabase
 from databases.models import Param
-
 
 
 class TinyDatabase(IDatabase):
@@ -25,10 +23,10 @@ class TinyDatabase(IDatabase):
         # self._db = self._db.table(table_name)
         return self._db.table(table_name)
 
-    def add(self, record: Param) -> int:
+    def add(self, record: Dict) -> int:
         return self._db.insert(record)
 
-    def get_all(self) -> List[Dict]: 
+    def get_all(self) -> Sequence[Dict]:
         return self._db.all()
 
     def __len__(self) -> int:

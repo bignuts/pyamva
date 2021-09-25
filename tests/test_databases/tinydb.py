@@ -1,10 +1,10 @@
-from site import addsitedir
-addsitedir('..')
-from traceback import format_stack
-from functools import wraps
-from os import remove
-from databases import TinyDatabase, Param
 import unittest
+from databases import TinyDatabase
+from os import remove
+from functools import wraps
+from site import addsitedir
+from typing import Dict
+addsitedir('..')
 
 
 # TODO fai funzionare sta merda
@@ -43,6 +43,11 @@ def setup_database(func):
     return func_wrapper
 
 
+def return_record(record_name: str) -> Dict:
+    return {'symbol': record_name, 'timeframe': 30, 'days': 20, 'decimal': 5,
+            'offset': 2, 'tpo_size': 10, 'profiles': [1, 2, 3, 4], 'active': True}
+
+
 class TestTinyDatabase(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -62,16 +67,14 @@ class TestTinyDatabase(unittest.TestCase):
 
     def test_add(self, **kwargs):
         self.db.select_table('test_select_table')
-        record = Param(symbol='TEST', timeframe=30, days=20, decimal=5,
-                       offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True)
+        record = return_record('TEST')
         id = self.db.add(record)
         self.assertEqual(
             id, 1, 'Il valore dovrebbe essere ugale a 1 perchè si è inserito un solo record')
 
     def test_get_all(self, **kwargs):
         for i in range(10):
-            record = Param(symbol=f'TEST{i}', timeframe=30, days=20, decimal=5,
-                           offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True)
+            record = return_record(f'TEST{1}')
             self.db.add(record)
         db_len = len(self.db)
         self.assertEqual(
@@ -79,13 +82,11 @@ class TestTinyDatabase(unittest.TestCase):
 
     def test_get_with_int(self, **kwargs):
         for i in range(10):
-            record = Param(symbol=f'TEST{i}', timeframe=30, days=20, decimal=5,
-                           offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True)
+            record = return_record(f'TEST{i}')
             self.db.add(record)
         res = self.db.get(5)
         self.assertDictEqual(
-            res, Param(symbol=f'TEST4', timeframe=30, days=20, decimal=5,
-                       offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True), 'Il valore dovrebbe essere ugale a 10 perchè sono stati inseriti 10 records')
+            res, return_record('TEST4'), 'Il valore dovrebbe essere ugale a 10 perchè sono stati inseriti 10 records')
 
     # @setup_database
     # def test_get_with_str(self, **kwargs):
