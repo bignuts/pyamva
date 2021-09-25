@@ -1,8 +1,27 @@
-from typing import List
+from typing import List, Mapping
 from typing_extensions import TypedDict
+from abc import ABC
 
 Param = TypedDict('Param', {'symbol': str, 'timeframe': int, 'days': int, 'decimal': int,
                   'offset': int, 'tpo_size': int, 'profiles': List[int], 'active': bool})
+
+class Document(dict):
+    """
+    A document stored in the database.
+
+    This class provides a way to access both a document's content as well as
+    its ID using ``doc.doc_id``.
+    """
+
+    def __init__(self, value: Mapping, doc_id: int):
+        super().__init__(value)
+        self.doc_id = doc_id
+
+class Interfaccia(ABC):
+    pass
+
+class prova(Interfaccia, Document):
+    pass
 
 # class Param:
 #     """Struttura per la definizione dei parametri"""

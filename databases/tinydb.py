@@ -1,7 +1,9 @@
-from typing import List, Tuple
+from typing import List, Dict, Optional
 from tinydb import TinyDB, Query
+from tinydb.table import Document
 from databases.interfaces import IDatabase
 from databases.models import Param
+
 
 
 class TinyDatabase(IDatabase):
@@ -19,20 +21,21 @@ class TinyDatabase(IDatabase):
     def disconnect(self) -> None:
         self._db.close()
 
+    def select_table(self, table_name: str):
+        # self._db = self._db.table(table_name)
+        return self._db.table(table_name)
+
     def add(self, record: Param) -> int:
         return self._db.insert(record)
 
-    def get_all(self) -> List[Param]:
+    def get_all(self) -> List[Dict]: 
         return self._db.all()
 
     def __len__(self) -> int:
         return len(self._db)
 
-    def get(self, id: Tuple[str, int]) -> Param:
-        if type(id) == type(str):
-            return self._db.get(Query().symbol == id)
-        else:
-             return self._db.get(doc_id=id)
+    def get(self, id: int) -> Optional[Dict]:
+        return self._db.get(doc_id=id)
 
     # def get(self, symbol: str) -> Param:
     #     dict = self._db.search(Query().symbol == symbol)

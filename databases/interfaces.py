@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
-from databases.models import Param
+from typing import List, Dict, Optional
 
 
 class IDatabase(ABC):
@@ -16,15 +16,19 @@ class IDatabase(ABC):
         pass
 
     @abstractmethod
-    def add(self, record: Param) -> int:
+    def select_table(self, table_name: str) -> None:
         pass
 
     @abstractmethod
-    def get_all(self) -> List[Param]:
+    def add(self, record: Dict) -> int:
         pass
 
     @abstractmethod
-    def get(self, id: str) -> Param:
+    def get_all(self) -> List[Dict]:
+        pass
+
+    @abstractmethod
+    def get(self, id: int) -> Optional[Dict]:
         pass
 
     # @abstractmethod
