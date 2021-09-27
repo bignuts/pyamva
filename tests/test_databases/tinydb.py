@@ -1,10 +1,10 @@
-import unittest
-from databases import TinyDatabase
-from os import remove
-from functools import wraps
 from site import addsitedir
-from typing import Dict
 addsitedir('..')
+from typing import Dict
+from functools import wraps
+from os import remove
+from databases import TinyDatabase
+import unittest
 
 
 # TODO fai funzionare sta merda
@@ -13,12 +13,14 @@ addsitedir('..')
 #     def __init__(self, db_name: str):
 #         self._db_path = f'./tests/test_databases/{db_name}.json'
 #         self._db = TinyDatabase(self._db_path)
+#         self._total_run = 0
 
 #     def __enter__(self):
+#         self._total_run += 1
 #         return self._db
 
 #     def __exit__(self, exc_type, exc_val, exc_tb):
-#         pass
+#         print(f'\nRunned total times => {self._total_run}')
 
 #     def __del__(self):
 #         self._db = None
@@ -29,7 +31,7 @@ addsitedir('..')
 def setup_database(func):
     '''Setup e pulizia del database per eseguire i vari test'''
     @wraps(func)
-    def func_wrapper(self, **kwargs):
+    def func_wrapper(self):
         total_run = 0
         db_name = f'{func.__name__}.json'
         db = TinyDatabase(db_name)
@@ -50,88 +52,81 @@ def return_record(record_name: str) -> Dict:
 
 class TestTinyDatabase(unittest.TestCase):
 
+    # Una volta per istanza
+    @classmethod
+    def setUpClass(cls) -> None:
+        pass
+
+    # Una volta per test
     def setUp(self) -> None:
         self.db_name = 'test.json'
         self.db = TinyDatabase(self.db_name)
 
+    # Una volta per test
     def tearDown(self) -> None:
+        del self.db
         remove(self.db_name)
 
-    def test_select_table(self):
-        self.db._db.insert({'ATEST': 1234})
-        self.db.select_table('testselecttable')
-        self.db._db.insert({'BTEST': 4321})
-        tables_len = len(self.db._db.tables())
-        self.assertEqual(
-            tables_len, 1, 'Il valore dovrebbe essere ugale a 1 perchè abbiamo inserito 1 tabella oltre a _default')
+    # Una volta per istanza
+    @classmethod
+    def tearDownClass(cls) -> None:
+        pass
 
-    def test_add(self, **kwargs):
-        self.db.select_table('test_select_table')
+    def test_select_table(self):
+        table_name = 'testselecttable'
+        self.db.select_table(table_name)
+        self.db.add({'BTEST': 4321})
+        tables = self.db.get_tables().pop()
+        self.assertEqual(tables, table_name)
+
+    def test_add(self):
         record = return_record('TEST')
         id = self.db.add(record)
-        self.assertEqual(
-            id, 1, 'Il valore dovrebbe essere ugale a 1 perchè si è inserito un solo record')
+        self.assertEqual(id, 1)
 
-    def test_get_all(self, **kwargs):
+    def test_get_all(self):
         for i in range(10):
-            record = return_record(f'TEST{1}')
+            record = return_record(f'TEST{i}')
             self.db.add(record)
         db_len = len(self.db)
-        self.assertEqual(
-            db_len, 10, 'Il valore dovrebbe essere ugale a 10 perchè sono stati inseriti 10 records')
+        self.assertEqual(db_len, 10)
 
-    def test_get_with_int(self, **kwargs):
+    def test_get_all_no_add(self):
+        db_len = len(self.db)
+        self.assertEqual(db_len, 0)
+
+    def test_get_with_int(self):
         for i in range(10):
             record = return_record(f'TEST{i}')
             self.db.add(record)
         res = self.db.get(5)
-        self.assertDictEqual(
-            res, return_record('TEST4'), 'Il valore dovrebbe essere ugale a 10 perchè sono stati inseriti 10 records')
+        self.assertDictEqual(res, return_record('TEST4'))
 
-    # @setup_database
-    # def test_get_with_str(self, **kwargs):
-    #
-    #     for i in range(10):
-    #         record = Param(symbol=f'TEST{i}', timeframe=30, days=20, decimal=5,
-    #                        offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True)
-    #         db.add(record)
-    #     res = db.get('TEST4')
-    #     self.assertDictEqual(
-    #         res, Param(symbol=f'TEST4', timeframe=30, days=20, decimal=5,
-    #                    offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True), 'Il valore dovrebbe essere ugale a 10 perchè sono stati inseriti 10 records')
+    def test_get_with_int_wrong_id(self):
+        for i in range(10):
+            record = return_record(f'TEST{i}')
+            self.db.add(record)
+        res = self.db.get(99)
+        self.assertEqual(res, None)
 
-    # def setUp(self):
-    #     self.db = TinyDatabase(dbname)
+    def test_remove_multiple(self):
+        for i in range(10):
+            record = return_record(f'TEST{i}')
+            self.db.add(record)
+        res = self.db.remove([1, 3, 8])
+        self.assertListEqual(res, [1, 3, 8])
 
-    # def tearDown(self):
-    #     del self.db
-    #     remove(dbname)
+    def test_remove_no_records(self):
+        for i in range(10):
+            record = return_record(f'TEST{i}')
+            self.db.add(record)
+        res = self.db.remove([])
+        self.assertListEqual(res, [])
 
-    # def test_add_get_remove(self):
-    #     param = Param(symbol='TEST', timeframe=30, days=20, decimal=5,
-    #                   offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True)
-    #     record_id = self.db.add(param)
-    #     ret_param = self.db.get('TEST')
-    #     self.assertDictEqual(ret_param, param,
-    #                          f'La riga aggiunta dovrebbe essere {param}')
-    #     rem_param = self.db.remove('TEST')
-    #     self.assertEqual(rem_param, record_id,
-    #                      f'Il valore di remove dovrebbe essere {record_id}')
-
-    # def test_exist_getall(self):
-    #     param = Param(symbol='TEST', timeframe=30, days=20, decimal=5,
-    #                   offset=2, tpo_size=10, profiles=[1, 2, 3, 4], active=True)
-    #     self.db.add(param)
-    #     self.db.add(param)
-    #     all_param = self.db.get_all()
-    #     self.assertEqual(len(all_param), 1,
-    #                      f'Dovrebbe esserci solo 1 riga nel database')
-    #     self.db.remove('TEST')
-
-    # def test_get_non_existing(self):
-    #     ret_param = self.db.get('NONEXISTING')
-    #     self.assertEqual(ret_param['symbol'], 'NONEXISTING')
-
-    # def test_remove_non_existing(self):
-    #     rem_param = self.db.remove('NONEXISTING')
-    #     self.assertEqual(rem_param, 0)
+    def test_remove_update(self):
+        for i in range(10):
+            record = return_record(f'TEST{i}')
+            self.db.add(record)
+        self.db.update([5], {'timeframe': 60})
+        res = self.db.get(5)['timeframe']
+        self.assertEqual(res, 60)

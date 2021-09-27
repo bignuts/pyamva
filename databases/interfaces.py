@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Optional, Sequence
+from typing import Dict, Optional, Sequence, List
 
 
 class IDatabase(ABC):
     '''Interfaccia per collegamento e operazioni con il dabase'''
 
     @abstractmethod
-    def connect(self, db_path: str):
+    def connect(self, db_path: str) -> None:
         '''Metodo per connettersi al database e restituisce un'istanza ad esso'''
         pass
 
@@ -20,7 +20,7 @@ class IDatabase(ABC):
 
     @abstractmethod
     def add(self, record: Dict) -> int:
-        pass   
+        pass
 
     @abstractmethod
     def get_all(self) -> Sequence[Dict]:
@@ -30,10 +30,10 @@ class IDatabase(ABC):
     def get(self, id: int) -> Optional[Dict]:
         pass
 
-    # @abstractmethod
-    # def update(self, record):
-    #     pass
+    @abstractmethod
+    def remove(self, id: List[int]) -> List[int]:
+        pass
 
-    # @abstractmethod
-    # def remove(self, key):
-    #     pass
+    @abstractmethod
+    def update(self, id: List[int], fields) -> List[int]:
+        pass
