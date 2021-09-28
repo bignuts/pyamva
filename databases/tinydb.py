@@ -3,24 +3,26 @@ from tinydb import TinyDB, Query
 from databases.interfaces import IDatabase
 
 # https://tinydb.readthedocs.io/en/latest/
+
+
 class TinyDatabase(IDatabase):
     """Implementazione di IDatabase usando TinyDB"""
 
     def __init__(self, dbpath: str = './tinydb.json'):
         self._db: TinyDB
-        self.connect(dbpath)
+        self._connect(dbpath)
         self._table = self._db.table('_default')
 
     def __del__(self):
-        self.disconnect()
+        self._disconnect()
 
-    def connect(self, dbpath) -> None:
+    def _connect(self, dbpath) -> None:
         self._db = TinyDB(dbpath)
 
-    def disconnect(self) -> None:
+    def _disconnect(self) -> None:
         self._db.close()
 
-    def select_table(self, table_name: str):
+    def select_table(self, table_name: str) -> None:
         self._table = self._db.table(table_name)
 
     def get_tables(self) -> Set[str]:
@@ -40,7 +42,6 @@ class TinyDatabase(IDatabase):
 
     def remove(self, id: List[int]) -> List[int]:
         return self._table.remove(doc_ids=id)
-    
+
     def update(self, id: List[int], fields) -> List[int]:
         return self._table.update(fields, doc_ids=id)
-    

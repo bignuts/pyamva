@@ -1,18 +1,17 @@
 from abc import ABC, abstractclassmethod
 from typing import Union
 from datetime import datetime
-from typing_extensions import ParamSpecArgs
 
 
 class IConnector(ABC):
     """Interfaccia per l'acquisizione dei dati"""
 
     @abstractclassmethod
-    def connect(self):
+    def _connect(self) -> None:
         pass
 
     @abstractclassmethod
-    def disconnect(self):
+    def _disconnect(self) -> None:
         pass
 
     @abstractclassmethod

@@ -6,12 +6,12 @@ class IDatabase(ABC):
     '''Interfaccia per collegamento e operazioni con il dabase'''
 
     @abstractmethod
-    def connect(self, db_path: str) -> None:
+    def _connect(self, db_path: str) -> None:
         '''Metodo per connettersi al database e restituisce un'istanza ad esso'''
         pass
 
     @abstractmethod
-    def disconnect(self) -> None:
+    def _disconnect(self) -> None:
         pass
 
     @abstractmethod
