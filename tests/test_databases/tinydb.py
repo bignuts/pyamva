@@ -59,7 +59,7 @@ class TestTinyDatabase(unittest.TestCase):
 
     # Una volta per test
     def setUp(self) -> None:
-        self.db_name = 'test.json'
+        self.db_name = './tests/test_connectors/test_tinydb.json'
         self.db = TinyDatabase(self.db_name)
 
     # Una volta per test

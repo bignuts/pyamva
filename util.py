@@ -3,7 +3,9 @@ from time import perf_counter
 
 
 def timer(func):
-    """Print the runtime of the decorated function"""
+    """
+    Print the runtime of the decorated function
+    """
     @wraps(func)
     def wrapper_timer(*args, **kwargs):
         start_time = perf_counter()
@@ -16,7 +18,9 @@ def timer(func):
 
 
 def debug(func):
-    """Print the function signature and return value"""
+    """
+    Print the function signature and return value
+    """
     @wraps(func)
     def wrapper_debug(*args, **kwargs):
         args_repr = [repr(a) for a in args]

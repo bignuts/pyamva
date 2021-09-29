@@ -1,10 +1,13 @@
 from abc import ABC, abstractclassmethod
 from typing import Union
 from datetime import datetime
+from pandas import DataFrame
 
 
 class IConnector(ABC):
-    """Interfaccia per l'acquisizione dei dati"""
+    """
+    Interfaccia per l'acquisizione dei dati
+    """
 
     @abstractclassmethod
     def _connect(self) -> None:
@@ -15,5 +18,5 @@ class IConnector(ABC):
         pass
 
     @abstractclassmethod
-    def get_rates(self, symbol: str, timeframe: int, frm: Union[int, datetime], to: Union[int, datetime]):
+    def get_rates(self, symbol: str, timeframe: int, frm: Union[int, datetime], to: Union[int, datetime]) -> DataFrame:
         pass

@@ -6,7 +6,9 @@ from databases.interfaces import IDatabase
 
 
 class TinyDatabase(IDatabase):
-    """Implementazione di IDatabase usando TinyDB"""
+    """
+    Implementazione di IDatabase usando TinyDB
+    """
 
     def __init__(self, dbpath: str = './tinydb.json'):
         self._db: TinyDB

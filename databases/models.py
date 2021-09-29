@@ -1,11 +1,13 @@
-from typing import List
-from typing_extensions import TypedDict
+# from typing import List
+# from typing_extensions import TypedDict
 
-Param = TypedDict('Param', {'symbol': str, 'timeframe': int, 'days': int, 'decimal': int,
-                  'offset': int, 'tpo_size': int, 'profiles': List[int], 'active': bool})
+# Param = TypedDict('Param', {'symbol': str, 'timeframe': int, 'days': int, 'decimal': int,
+#                   'offset': int, 'tpo_size': int, 'profiles': List[int], 'active': bool})
 
 # class Param:
-#     """Struttura per la definizione dei parametri"""
+#     """
+#     Struttura per la definizione dei parametri
+#     """
 
 #     def __init__(self,
 #                  symbol: str = '',
