@@ -1,9 +1,9 @@
 from site import addsitedir
 addsitedir('..')
-from typing import Dict
-from functools import wraps
-from os import remove
 from databases import TinyDatabase
+from os import remove
+from functools import wraps
+from typing import Dict
 import unittest
 
 
@@ -46,8 +46,19 @@ def setup_database(func):
 
 
 def return_record(record_name: str) -> Dict:
-    return {'symbol': record_name, 'timeframe': 30, 'days': 20, 'decimal': 5,
-            'offset': 2, 'tpo_size': 10, 'profiles': [1, 2, 3, 4], 'active': True}
+    return {
+        'symbol': record_name,
+        'timeframe': 30,
+        'days': 20,
+        'decimal': 5,
+        'offset': 2,
+        'tpo_size': 10,
+        'profiles': [
+            1,
+            2,
+            3,
+            4],
+        'active': True}
 
 
 class TestTinyDatabase(unittest.TestCase):

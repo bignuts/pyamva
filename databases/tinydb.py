@@ -1,6 +1,6 @@
 from typing import Dict, Optional, Sequence, Set, List
-from tinydb import TinyDB, Query
-from databases.interfaces import IDatabase
+from tinydb import TinyDB
+from .interfaces import IDatabase
 
 # https://tinydb.readthedocs.io/en/latest/
 

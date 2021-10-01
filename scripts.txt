@@ -13,3 +13,6 @@ python -m cProfile -o prof.prof main.py ; snakeviz prof.prof
 
 //uninstall all package
 pip freeze > to_delete.txt ; pip uninstall -y -r to_delete.txt ; Remove-Item to_delete.txt
+
+//autopep8 all project
+autopep8 . --in-place --recursive --verbose --exclude '_old, env' --aggressive --aggressive --aggressive

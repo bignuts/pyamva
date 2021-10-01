@@ -1,5 +1,8 @@
+from datetime import datetime
 from functools import wraps
 from time import perf_counter
+from pickle import dump, load
+from typing import Any
 
 
 def timer(func):
@@ -31,3 +34,21 @@ def debug(func):
         print(f"{func.__name__!r} returned {value!r}")
         return value
     return wrapper_debug
+
+
+def is_datetime_aware(dt: datetime) -> bool:
+    # if dt.tzinfo != None and dt.tzinfo.utcoffset(None) != None:
+    if dt.tzinfo is not None:
+        return True
+    else:
+        return False
+
+
+def pickle_dump(obj: Any, path: str) -> None:
+    with open(path, 'wb') as f:
+        dump(obj, f)
+
+
+def pickle_load(path: str) -> Any:
+    with open(path, 'rb') as f:
+        return load(f)

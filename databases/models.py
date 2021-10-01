@@ -22,7 +22,7 @@
 #         self.symbol = symbol
 #         self.timeframe = timeframe
 #         self.days = days
-#         self.decimal = decimal    
+#         self.decimal = decimal
 #         self.offset = offset
 #         self.tpo_size = tpo_size
 #         self.profiles = profiles
@@ -38,7 +38,8 @@
 #     tpo_size = d.get('tpo_size', -1)
 #     profiles = d.get('profiles', [])
 #     active = d.get('active', False)
-#     return cls(symbol, timeframe, days, decimal, offset, tpo_size, profiles, active)
+# return cls(symbol, timeframe, days, decimal, offset, tpo_size, profiles,
+# active)
 
 # def to_dict(self) -> Dict:
 #     return {'symbol': self.symbol,

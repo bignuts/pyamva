@@ -1,13 +1,15 @@
-from datetime import datetime
-from typing import Any, Union
+from datetime import datetime, timedelta, timezone
+from typing import List, Union
+from zoneinfo import ZoneInfo
 from dotenv import dotenv_values
-from connectors.interfaces import IConnector
+from .interfaces import IConnector
 from MetaTrader5 import initialize, shutdown, copy_rates_from, copy_rates_from_pos, copy_rates_range
-from pandas import DataFrame, to_datetime
+from .models import Rates
+from numpy import ndarray
 
 
 # https://www.mql5.com/en/docs/integration/python_metatrader5
-
+# https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 class MetaTrader(IConnector):
     """
@@ -29,7 +31,13 @@ class MetaTrader(IConnector):
     def _disconnect(self) -> None:
         shutdown()
 
-    def get_rates(self, symbol: str, timeframe: int, frm: Union[int, datetime], to: Union[int, datetime]) -> DataFrame:
+    def get_rates(self,
+                  symbol: str,
+                  timeframe: int,
+                  frm: Union[int,
+                             datetime],
+                  to: Union[int,
+                            datetime]) -> List[Rates]:
         """
         Parameters
         ----------
@@ -37,26 +45,46 @@ class MetaTrader(IConnector):
             frm è il parametro di inizio ricerca, il più vecchio cronologicamente
 
         to: int, datetime
-            frm è il parametro di fine ricerca, il più recente cronologicamente
-
-        Returns
-        -------
-        pandas.DataFrame -> Colonne |index|time:uint32|open:float64|high:float64|low:float64|close:float64|tick_volume:uint32|spread:uint32|real_volume:uint32|
+            to è il parametro di fine ricerca, il più recente cronologicamente
         """
-        rates: Any
-        if type(frm) == datetime and type(to) == int:
+
+        rates_list: List[Rates] = []
+
+        if isinstance(frm, datetime) and isinstance(to, int):
             rates = copy_rates_from(symbol, timeframe, frm, to)
-        if type(frm) == int and type(to) == int:
+        if isinstance(frm, int) and isinstance(to, int):
             rates = copy_rates_from_pos(symbol, timeframe, frm, to)
-        if type(frm) == datetime and type(to) == datetime:
+        if isinstance(frm, datetime) and isinstance(to, datetime):
             rates = copy_rates_range(symbol, timeframe, frm, to)
-        rates_df = DataFrame(rates)
-        rates_df.index.name = 'index'
-        rates_df = rates_df.astype({'time': 'uint32', 'tick_volume': 'uint32', # type: ignore
-                        'spread': 'uint32', 'real_volume': 'uint32'}, errors='raise')
-        # print(rates_df.dtypes)
-        # converte time in formato datetime
-        # rates_df['time']=to_datetime(rates_df['time'], unit='s')
-        # inverte i dati, dal meno recente al più recente
-        # rates_df = rates_df.iloc[::-1]
-        return rates_df
+
+        for rate in rates:
+            transformed_rates = self._transform_rates(rate)
+            rates_list.append(transformed_rates)
+        return rates_list
+
+    def _transform_rates(self, rate: ndarray) -> Rates:
+        epoch = rate[0]
+        # epoch = self._add_hours_to_epoch(rate[0], 2)
+        # time = datetime.utcfromtimestamp(rate[0])
+        time = datetime.utcfromtimestamp(epoch).astimezone(timezone.utc)
+        # time = datetime.fromtimestamp(rate[0], tz=ZoneInfo('Europe/Rome'))
+        open = float(rate[1])
+        high = float(rate[2])
+        low = float(rate[3])
+        close = float(rate[4])
+        tick_volume = int(rate[5])
+        spread = int(rate[6])
+        real_volume = int(rate[7])
+        rate_dict = Rates(
+            time=time,
+            open=open,
+            high=high,
+            low=low,
+            close=close,
+            tick_volume=tick_volume,
+            spread=spread,
+            real_volume=real_volume)
+        return rate_dict
+
+    def _add_hours_to_epoch(self, epoch: int, hours: int) -> int:
+        return epoch + (60*60*hours)
