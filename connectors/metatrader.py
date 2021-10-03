@@ -64,10 +64,12 @@ class MetaTrader(IConnector):
 
     def _transform_rates(self, rate: ndarray) -> Rates:
         epoch = rate[0]
-        # epoch = self._add_hours_to_epoch(rate[0], 2)
-        # time = datetime.utcfromtimestamp(rate[0])
-        time = datetime.utcfromtimestamp(epoch).astimezone(timezone.utc)
-        # time = datetime.fromtimestamp(rate[0], tz=ZoneInfo('Europe/Rome'))
+        # epoch = self._add_hours_to_epoch(rate[0], 1)
+        # time = datetime.utcfromtimestamp(epoch)
+        time = datetime.fromtimestamp(epoch)
+        # time = datetime.utcfromtimestamp(epoch).astimezone(timezone.utc)
+        # time = datetime.fromtimestamp(epoch, tz=ZoneInfo('Europe/Rome'))
+        # time = datetime.fromtimestamp(epoch, tz=ZoneInfo('America/New_York'))
         open = float(rate[1])
         high = float(rate[2])
         low = float(rate[3])
@@ -87,4 +89,4 @@ class MetaTrader(IConnector):
         return rate_dict
 
     def _add_hours_to_epoch(self, epoch: int, hours: int) -> int:
-        return epoch + (60*60*hours)
+        return epoch + (60 * 60 * hours)

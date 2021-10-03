@@ -1,10 +1,10 @@
+import unittest
+from connectors.metatrader import MetaTrader
+from MetaTrader5 import TIMEFRAME_D1, TIMEFRAME_M30
+from datetime import datetime, timezone, timedelta
+from util import pickle_dump, pickle_load
 from site import addsitedir
 addsitedir('..')
-from util import pickle_dump, pickle_load
-from datetime import datetime, timezone, timedelta
-from MetaTrader5 import TIMEFRAME_D1, TIMEFRAME_M30
-from connectors.metatrader import MetaTrader
-import unittest
 
 
 class TestMetaTrader(unittest.TestCase):

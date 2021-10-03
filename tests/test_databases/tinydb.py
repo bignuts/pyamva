@@ -1,10 +1,10 @@
+import unittest
+from typing import Dict
+from functools import wraps
+from os import remove
+from databases import TinyDatabase
 from site import addsitedir
 addsitedir('..')
-from databases import TinyDatabase
-from os import remove
-from functools import wraps
-from typing import Dict
-import unittest
 
 
 # TODO fai funzionare sta merda
