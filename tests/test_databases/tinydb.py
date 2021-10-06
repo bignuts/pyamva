@@ -3,8 +3,8 @@ from typing import Dict
 from functools import wraps
 from os import remove
 from databases import TinyDatabase
-from site import addsitedir
-addsitedir('..')
+# from site import addsitedir
+# addsitedir('..')
 
 
 # TODO fai funzionare sta merda

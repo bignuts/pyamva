@@ -58,18 +58,16 @@ class MetaTrader(IConnector):
             rates = copy_rates_range(symbol, timeframe, frm, to)
 
         for rate in rates:
-            transformed_rates = self._transform_rates(rate)
-            rates_list.append(transformed_rates)
+            prepped_rates = self._prepare_rates(rate)
+            rates_list.append(prepped_rates)
         return rates_list
 
-    def _transform_rates(self, rate: ndarray) -> Rates:
-        epoch = rate[0]
-        # epoch = self._add_hours_to_epoch(rate[0], 1)
-        # time = datetime.utcfromtimestamp(epoch)
-        time = datetime.fromtimestamp(epoch)
-        # time = datetime.utcfromtimestamp(epoch).astimezone(timezone.utc)
-        # time = datetime.fromtimestamp(epoch, tz=ZoneInfo('Europe/Rome'))
-        # time = datetime.fromtimestamp(epoch, tz=ZoneInfo('America/New_York'))
+    def _prepare_rates(self, rate: ndarray) -> Rates:
+        # time = datetime.utcfromtimestamp(rate[0]) + timedelta(hours=1)
+        time = datetime.fromtimestamp(rate[0])
+        # time = datetime.utcfromtimestamp(rate[0]).astimezone(timezone.utc)
+        # time = datetime.fromtimestamp(rate[0], tz=ZoneInfo('Europe/Rome'))
+        # time = datetime.fromtimestamp(rate[0], tz=ZoneInfo('America/New_York'))
         open = float(rate[1])
         high = float(rate[2])
         low = float(rate[3])
@@ -87,6 +85,3 @@ class MetaTrader(IConnector):
             spread=spread,
             real_volume=real_volume)
         return rate_dict
-
-    def _add_hours_to_epoch(self, epoch: int, hours: int) -> int:
-        return epoch + (60 * 60 * hours)
