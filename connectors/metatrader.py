@@ -3,7 +3,7 @@ from typing import List, Union
 from zoneinfo import ZoneInfo
 from dotenv import dotenv_values
 from .interfaces import IConnector
-from MetaTrader5 import initialize, shutdown, copy_rates_from, copy_rates_from_pos, copy_rates_range
+from MetaTrader5 import TIMEFRAME_D1, initialize, shutdown, copy_rates_from, copy_rates_from_pos, copy_rates_range
 from .models import Rates
 from numpy import ndarray
 
@@ -31,31 +31,39 @@ class MetaTrader(IConnector):
     def _disconnect(self) -> None:
         shutdown()
 
-    def get_rates(self,
-                  symbol: str,
-                  timeframe: int,
-                  frm: Union[int,
-                             datetime],
-                  to: Union[int,
-                            datetime]) -> List[Rates]:
+    def get_rates(self, symbol: str, timeframe: int,
+                  frm: Union[int, datetime], to: Union[int, datetime]) -> List[Rates]:
         """
         Parameters
         ----------
         frm : int, datetime
-            frm è il parametro di inizio ricerca, il più vecchio cronologicamente
+            frm è il parametro di inizio ricerca, il più recente cronologicamente
 
         to: int, datetime
-            to è il parametro di fine ricerca, il più recente cronologicamente
-        """
+            to è il parametro di fine ricerca, il più vecchio cronologicamente
 
+        !!ATTENZIONE!!
+        Se entrambi i paramentri sono type == int:
+            * frm è il parametro di fine ricerca, il più recente cronologicamente (0 indice di partenza in MT5)
+            * to è il parametro di inizio ricerca, il più vecchio cronologicamente
+        """
+        # TODO se il parametro e TIMEFRAME_D1 sbaglia con gli offset il
+        # bastardo da vedere
         rates_list: List[Rates] = []
+        # sotto a TIMEFRAME_D1 bisogna sottrarre timeframe a to
+        if timeframe < TIMEFRAME_D1 and isinstance(frm, datetime):
+            frm -= timedelta(minutes=timeframe)
 
         if isinstance(frm, datetime) and isinstance(to, int):
             rates = copy_rates_from(symbol, timeframe, frm, to)
         if isinstance(frm, int) and isinstance(to, int):
             rates = copy_rates_from_pos(symbol, timeframe, frm, to)
         if isinstance(frm, datetime) and isinstance(to, datetime):
-            rates = copy_rates_range(symbol, timeframe, frm, to)
+            if to > frm:
+                raise Exception(
+                    'Il parametro frm deve essere maggiore di to, perchè il più recente cronologicamente')
+            rates = copy_rates_range(
+                symbol, timeframe, to, frm + timedelta(days=1))
 
         for rate in rates:
             prepped_rates = self._prepare_rates(rate)
@@ -63,7 +71,7 @@ class MetaTrader(IConnector):
         return rates_list
 
     def _prepare_rates(self, rate: ndarray) -> Rates:
-        # time = datetime.utcfromtimestamp(rate[0]) + timedelta(hours=1)
+        # time = datetime.utcfromtimestamp(rate[0]) + timedelta(hours=2)
         time = datetime.fromtimestamp(rate[0])
         # time = datetime.utcfromtimestamp(rate[0]).astimezone(timezone.utc)
         # time = datetime.fromtimestamp(rate[0], tz=ZoneInfo('Europe/Rome'))

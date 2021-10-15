@@ -1,0 +1,3 @@
+*controllare il modulo metatrader, non restituisce i rates corretti, con TIMEFRAME_D1 sbaglia, controllare get_rates con paramentri int
+*implementare tests per TPO _prepare_rates e _from_prepared_rates_to_tpo
+*inizizare il modulo reference

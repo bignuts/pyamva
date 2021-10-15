@@ -2,7 +2,8 @@ from datetime import datetime
 from functools import wraps
 from time import perf_counter
 from pickle import dump, load
-from typing import Any
+from typing import Any, List
+from connectors import Rates
 
 
 def timer(func):
@@ -52,3 +53,19 @@ def pickle_dump(obj: Any, path: str) -> None:
 def pickle_load(path: str) -> Any:
     with open(path, 'rb') as f:
         return load(f)
+
+
+def rates_to_py_file(rates: List[Rates], file_name: str) -> None:
+    with open(file_name, 'w') as file:
+        file.write('from typing import List\n')
+        file.write('from connectors import Rates\n')
+        file.write('from datetime import datetime\n')
+        file.writelines('\n')
+        file.writelines('\n')
+        file.write('rates : List[Rates] = [\n')
+        for rate in rates:
+            print(rate)
+            time = rate['time']
+            s = f"\t{{'time': datetime({time.year}, {time.month}, {time.day}, {time.hour}, {time.minute}, {time.second}), 'open': {rate['open']}, 'high': {rate['high']}, 'low': {rate['low']}, 'close': {rate['close']}, 'tick_volume': {rate['tick_volume']}, 'spread': {rate['spread']}, 'real_volume': {rate['real_volume']}}},\n"
+            file.write(s)
+        file.write(']')

@@ -18,11 +18,6 @@ class IConnector(ABC):
         pass
 
     @abstractmethod
-    def get_rates(self,
-                  symbol: str,
-                  timeframe: int,
-                  frm: Union[int,
-                             datetime],
-                  to: Union[int,
-                            datetime]) -> List[Rates]:
+    def get_rates(self, symbol: str, timeframe: int,
+                  frm: Union[int, datetime], to: Union[int, datetime]) -> List[Rates]:
         pass

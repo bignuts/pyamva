@@ -39,7 +39,7 @@ class TestMetaTrader(unittest.TestCase):
         path = './tests/test_connectors/copy_rates_range.pkl'
         to = datetime(2021, 7, 20, 15, 25, 36, tzinfo=timezone.utc)
         frm = to - timedelta(days=15)
-        rates1 = self.mt.get_rates("EURUSD", TIMEFRAME_M30, frm, to)
+        rates1 = self.mt.get_rates("EURUSD", TIMEFRAME_D1, frm, to)
         # pickle_dump(rates1, path)
         rates2 = pickle_load(path)
         self.assertListEqual(rates1, rates2)
