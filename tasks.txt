@@ -1,3 +1,8 @@
 *controllare il modulo metatrader, non restituisce i rates corretti, con TIMEFRAME_D1 sbaglia, controllare get_rates con paramentri int
 *implementare tests per TPO _prepare_rates e _from_prepared_rates_to_tpo
 *inizizare il modulo reference
+
+
+
+
+* 16/10/2021 local_time = datetime.fromtimestamp(rate[0], tz=ZoneInfo('Europe/Rome')) => local_time.utcoffset() = 2:00:00 - local_time.tzname() = CEST - local_time.dst() = 1:00:00

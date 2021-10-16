@@ -50,7 +50,7 @@ class MetaTrader(IConnector):
         # TODO se il parametro e TIMEFRAME_D1 sbaglia con gli offset il
         # bastardo da vedere
         rates_list: List[Rates] = []
-        # sotto a TIMEFRAME_D1 bisogna sottrarre timeframe a to
+        # sotto a TIMEFRAME_D1 bisogna sottrarre timeframe a frm altrimenti restituisce un Rates in più alla ricerca
         if timeframe < TIMEFRAME_D1 and isinstance(frm, datetime):
             frm -= timedelta(minutes=timeframe)
 
@@ -62,8 +62,9 @@ class MetaTrader(IConnector):
             if to > frm:
                 raise Exception(
                     'Il parametro frm deve essere maggiore di to, perchè il più recente cronologicamente')
+            # aggiungo + timedelta(days=1) altrimenti restituisce un giorno in meno alla ricerca
             rates = copy_rates_range(
-                symbol, timeframe, to, frm + timedelta(days=1))
+                symbol, timeframe, to, frm + timedelta(days=1)) 
 
         for rate in rates:
             prepped_rates = self._prepare_rates(rate)
@@ -71,11 +72,12 @@ class MetaTrader(IConnector):
         return rates_list
 
     def _prepare_rates(self, rate: ndarray) -> Rates:
-        # time = datetime.utcfromtimestamp(rate[0]) + timedelta(hours=2)
-        time = datetime.fromtimestamp(rate[0])
+        # time = datetime.fromtimestamp(rate[0])
+        utc_time = datetime.fromtimestamp(rate[0], tz=timezone.utc)
         # time = datetime.utcfromtimestamp(rate[0]).astimezone(timezone.utc)
-        # time = datetime.fromtimestamp(rate[0], tz=ZoneInfo('Europe/Rome'))
+        local_time = datetime.fromtimestamp(rate[0], tz=ZoneInfo('Europe/Rome'))
         # time = datetime.fromtimestamp(rate[0], tz=ZoneInfo('America/New_York'))
+
         open = float(rate[1])
         high = float(rate[2])
         low = float(rate[3])
@@ -84,7 +86,7 @@ class MetaTrader(IConnector):
         spread = int(rate[6])
         real_volume = int(rate[7])
         rate_dict = Rates(
-            time=time,
+            time=utc_time,
             open=open,
             high=high,
             low=low,

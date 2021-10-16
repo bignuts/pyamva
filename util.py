@@ -64,7 +64,6 @@ def rates_to_py_file(rates: List[Rates], file_name: str) -> None:
         file.writelines('\n')
         file.write('rates : List[Rates] = [\n')
         for rate in rates:
-            print(rate)
             time = rate['time']
             s = f"\t{{'time': datetime({time.year}, {time.month}, {time.day}, {time.hour}, {time.minute}, {time.second}), 'open': {rate['open']}, 'high': {rate['high']}, 'low': {rate['low']}, 'close': {rate['close']}, 'tick_volume': {rate['tick_volume']}, 'spread': {rate['spread']}, 'real_volume': {rate['real_volume']}}},\n"
             file.write(s)
