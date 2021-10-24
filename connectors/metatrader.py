@@ -50,9 +50,10 @@ class MetaTrader(IConnector):
         # TODO se il parametro e TIMEFRAME_D1 sbaglia con gli offset il
         # bastardo da vedere
         rates_list: List[Rates] = []
+        
         # sotto a TIMEFRAME_D1 bisogna sottrarre timeframe a frm altrimenti restituisce un Rates in più alla ricerca
-        if timeframe < TIMEFRAME_D1 and isinstance(frm, datetime):
-            frm -= timedelta(minutes=timeframe)
+        # if timeframe < TIMEFRAME_D1 and isinstance(frm, datetime):
+        #     frm -= timedelta(minutes=timeframe)
 
         if isinstance(frm, datetime) and isinstance(to, int):
             rates = copy_rates_from(symbol, timeframe, frm, to)
@@ -73,10 +74,9 @@ class MetaTrader(IConnector):
 
     def _prepare_rates(self, rate: ndarray) -> Rates:
         # time = datetime.fromtimestamp(rate[0])
-        utc_time = datetime.fromtimestamp(rate[0], tz=timezone.utc)
-        # time = datetime.utcfromtimestamp(rate[0]).astimezone(timezone.utc)
-        local_time = datetime.fromtimestamp(rate[0], tz=ZoneInfo('Europe/Rome'))
-        # time = datetime.fromtimestamp(rate[0], tz=ZoneInfo('America/New_York'))
+        time = datetime.fromtimestamp(rate[0], tz=timezone.utc)
+        # time = datetime.fromtimestamp(rate[0], tz=ZoneInfo('Europe/Rome'))
+        # time += timedelta(hours=1)
 
         open = float(rate[1])
         high = float(rate[2])
@@ -86,7 +86,7 @@ class MetaTrader(IConnector):
         spread = int(rate[6])
         real_volume = int(rate[7])
         rate_dict = Rates(
-            time=utc_time,
+            time=time,
             open=open,
             high=high,
             low=low,

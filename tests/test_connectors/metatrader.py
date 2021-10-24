@@ -24,7 +24,7 @@ class TestMetaTrader(unittest.TestCase):
         pass
 
     def test_get_rates_copy_rates_from(self):
-        path = './tests/test_connectors/copy_rates_from.pkl'
+        path = './tests/test_connectors/pkl/copy_rates_from.pkl'
         dt = datetime(2021, 9, 20, 15, 25, 36, tzinfo=timezone.utc)
         rates1 = self.mt.get_rates("EURUSD", TIMEFRAME_D1, dt, 10)
         # pickle_dump(rates1, path)
@@ -36,7 +36,7 @@ class TestMetaTrader(unittest.TestCase):
         self.assertEqual(len(rates_df), 13)
 
     def test_get_rates_copy_rates_range(self):
-        path = './tests/test_connectors/copy_rates_range.pkl'
+        path = './tests/test_connectors/pkl/copy_rates_range.pkl'
         to = datetime(2021, 7, 20, 15, 25, 36, tzinfo=timezone.utc)
         frm = to - timedelta(days=15)
         rates1 = self.mt.get_rates("EURUSD", TIMEFRAME_D1, frm, to)

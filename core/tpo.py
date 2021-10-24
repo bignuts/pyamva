@@ -6,7 +6,7 @@ from connectors.models import Rates
 
 def _check_saturday_sunday(df: DataFrame) -> bool:
     days = _days_in_df(df)
-    days.to_excel('./xlsx/days.xlsx')
+    # days.to_csv('./data/csv/days.csv')
     check_res = ((days['day_name'] == 'Saturday') |
                  (days['day_name'] == 'Sunday')).any()
     return check_res
@@ -36,8 +36,8 @@ class Tpo:
 
         prepped_rates = self._prepare_rates(rates, decimal, tpo_size)
         tpo = self._from_prepared_rates_to_tpo(prepped_rates, tpo_size)
-        prepped_rates.to_excel('./xlsx/prepped_rates.xlsx')
-        tpo.to_excel('./xlsx/tpo.xlsx')
+        # prepped_rates.to_csv('./data/csv/prepped_rates.csv')
+        # tpo.to_csv('./data/csv/tpo.csv')
         return tpo
 
     def _prepare_rates(
@@ -50,10 +50,12 @@ class Tpo:
         '''
         df = DataFrame(rates)
         df = df.set_index('time')
-        df.to_excel('./xlsx/df.xlsx')
+        # df.to_csv('./data/csv/df.csv')
+
         # Errore se ci sono dei sabati / domeniche
-        if _check_saturday_sunday(df):
-            raise Exception('Ci sono dei sabati e delle domeniche')
+        # if _check_saturday_sunday(df):
+        #     raise Exception('Ci sono dei sabati e delle domeniche')
+        
         # transforma in tpo le colonne high e low
         df['thigh'] = self._df_column_float_to_tpo(
             df['high'], decimal, ceil, tpo_size)
