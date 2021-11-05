@@ -1,4 +1,4 @@
-import unittest
+from unittest import TestCase
 from typing import Dict
 from functools import wraps
 from os import remove
@@ -61,7 +61,7 @@ def return_record(record_name: str) -> Dict:
         'active': True}
 
 
-class TestTinyDatabase(unittest.TestCase):
+class TestTinyDatabase(TestCase):
 
     # Una volta per istanza
     @classmethod

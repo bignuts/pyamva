@@ -1,4 +1,4 @@
-import unittest
+from unittest import TestCase
 from connectors.metatrader import MetaTrader
 from MetaTrader5 import TIMEFRAME_D1, TIMEFRAME_M30
 from datetime import datetime, timezone, timedelta
@@ -7,7 +7,7 @@ from util import pickle_dump, pickle_load
 # addsitedir('..')
 
 
-class TestMetaTrader(unittest.TestCase):
+class TestMetaTrader(TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -37,8 +37,8 @@ class TestMetaTrader(unittest.TestCase):
 
     def test_get_rates_copy_rates_range(self):
         path = './tests/test_connectors/pkl/copy_rates_range.pkl'
-        to = datetime(2021, 7, 20, 15, 25, 36, tzinfo=timezone.utc)
-        frm = to - timedelta(days=15)
+        frm = datetime(2021, 7, 20, 15, 25, 36, tzinfo=timezone.utc)
+        to = frm - timedelta(days=15)
         rates1 = self.mt.get_rates("EURUSD", TIMEFRAME_D1, frm, to)
         # pickle_dump(rates1, path)
         rates2 = pickle_load(path)

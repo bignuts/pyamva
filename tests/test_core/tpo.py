@@ -1,12 +1,13 @@
 from util import pickle_dump, pickle_load
-import unittest
+from unittest import TestCase
 from core import Tpo
+from core.tpo import _days_in_df
 from .rates import rates_m30
 # from site import addsitedir
 # addsitedir('..')
 
 
-class TestTpo(unittest.TestCase):
+class TestTpo(TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -22,22 +23,6 @@ class TestTpo(unittest.TestCase):
     def tearDownClass(cls):
         pass
 
-    def test_Tpo(self):
-        # rates_path = './tests/test_core/pkl/RATES_EURUSD_M30_20210801_20211010.pkl'
-        # tpo_path = './tests/test_core/pkl/tpo_eurusd_tpo.pkl'
-        # mt = MetaTrader()
-        # rates = mt.get_rates(
-        #     'EURUSD', TIMEFRAME_M30, datetime(
-        #         2021, 8, 1), datetime(
-        #         2021, 10, 10))
-        # pickle_dump(rates, rates_path)
-        # rates = pickle_load(rates_path)
-        # tpo = Tpo().from_rates(rates, 5, 5)
-        # pickle_dump(tpo, tpo_path)
-        # tpo_to_compare = pickle_load(tpo_path)
-        # self.assertTrue(tpo.equals(tpo_to_compare))
-        pass
-
     def test_prepare_rates(self):
         path = './tests/test_core/pkl/prepped_rates.pkl'
         prepped_rates = Tpo()._prepare_rates(rates_m30, 5, 5)
@@ -46,9 +31,16 @@ class TestTpo(unittest.TestCase):
         self.assertTrue(prepped_rates.equals(to_compare))
 
     def test_from_prepared_rates_to_tpo(self):
-        path = './tests/test_core/pkl/tpo.pkl'
-        t = Tpo()
-        tpo = t._from_prepared_rates_to_tpo(t._prepare_rates(rates_m30, 5, 5), 5)
-        # pickle_dump(tpo, path)
-        to_compare = pickle_load(path)
+        prep_path = './tests/test_core/pkl/prepped_rates.pkl'
+        tpo_path = './tests/test_core/pkl/tpo.pkl'
+        tpo = Tpo()._from_prepared_rates_to_tpo(pickle_load(prep_path), 5)
+        # pickle_dump(tpo, tpo_path)
+        to_compare = pickle_load(tpo_path)
         self.assertTrue(tpo.equals(to_compare))
+
+    def test_find_date(self):
+        path = './tests/test_core/pkl/prepped_rates.pkl'
+        rates_df = pickle_load(path)
+        days = _days_in_df(rates_df)
+        # days.to_csv('./data/csv/days.csv')
+        pass

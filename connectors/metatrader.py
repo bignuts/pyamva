@@ -76,7 +76,7 @@ class MetaTrader(IConnector):
         # time = datetime.fromtimestamp(rate[0])
         time = datetime.fromtimestamp(rate[0], tz=timezone.utc)
         # time = datetime.fromtimestamp(rate[0], tz=ZoneInfo('Europe/Rome'))
-        # time += timedelta(hours=1)
+        time += timedelta(hours=2)
 
         open = float(rate[1])
         high = float(rate[2])

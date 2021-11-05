@@ -1,7 +1,10 @@
 *inizizare il modulo reference
 *il modulo metatrader ha sempre il problema che restituisce i valori compresi di sabato e domeniche, come fare?
 
-
+# da guardare
+# marketscreen 3
+# reference 2
+# report 1
 
 
 * 16/10/2021 local_time = datetime.fromtimestamp(rate[0], tz=ZoneInfo('Europe/Rome')) => local_time.utcoffset() = 2:00:00 - local_time.tzname() = CEST - local_time.dst() = 1:00:00

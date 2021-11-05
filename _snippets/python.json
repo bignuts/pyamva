@@ -9,10 +9,10 @@
     "body": [
       "from site import addsitedir",
       "addsitedir('..')",
-      "import unittest",
+      "from unittest import TestCase",
       "",
       "",
-      "class Test$1(unittest.TestCase):",
+      "class Test$1(TestCase):",
       "",
       "\t@classmethod",
       "\tdef setUpClass(cls):",
